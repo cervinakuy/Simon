@@ -1,0 +1,5 @@
+# Key (do not remove unless you want to expose your private key!)
+.env
+
+# JetBrains
+.idea/
