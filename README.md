@@ -13,13 +13,13 @@ most users receiving immediate help via Simon's help in DM as soon as they joine
 
 ## Simon in Action
 #### Answering common queries / questions
-![](../../../Desktop/channelresponse.png)
+![](https://i.imgur.com/NnDJLib.png)
 
 #### DM welcome message upon join
-![](../../../Desktop/dmwelcome.png)
+![](https://i.imgur.com/Lx0CF4x.png)
 
 #### Custom activity status
-![](../../../Desktop/custom%20activity.png)
+![](https://i.imgur.com/NQ4NAmR.png)
 
 ## Usage
 
