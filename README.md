@@ -1,5 +1,5 @@
 # Simon - Discord Q&A Help Bot Template
-Tired of answering the same questions over and over? As the owner of a large customer support discord server, I was too. Simon is a simple Discord bot template written in Python to help assist the yourself, moderators, and your users! 
+Tired of answering the same questions over and over? As the owner of a large customer support discord server, I was too. Simon is a simple Discord bot template written in Python to help assist yourself, moderators, and users! 
 
 In my own experience, successful configuration of Simon resulted in a **87% drop** in daily message count in public channels, with
 most users receiving immediate help via Simon's help in DM as soon as they joined.
