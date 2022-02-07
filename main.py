@@ -14,35 +14,20 @@ intents.members = True
 client = commands.Bot(command_prefix=',', intents=intents)
 query_manager = QueryManager()
 
+participating_channels: list = ["test-bot-commands"]
+
 
 @client.event
 async def on_ready():
+    #################################
+    #   Custom activity status      #
+    #################################
     await client.change_presence(activity=discord.Game("DM me your questions!"))
 
-    query_manager.add_query(["signs", "op", "use"], 2, constants.SIGNS_MESSAGE)
-    query_manager.add_query(["top", "leaderboard", "leaderboards"], 1, constants.LEADERBOARD_MESSAGE)
-    query_manager.add_query(["command", "format"], 2, constants.COMMAND_FORMAT_MESSAGE)
-    query_manager.add_query(["have", "no", "kit"], 3, constants.NO_KIT_MESSAGE)
-    query_manager.add_query(["installation", "install", "setup"], 1, constants.INSTALLATION_MESSAGE)
-    query_manager.add_query(["permission", "permissions", "deop", "deopped"], 1, constants.PERMISSION_MESSAGE)
-    query_manager.add_query(["rank", "prefix", "chat"], 1, constants.RANK_MESSAGE)
-    query_manager.add_query(["original"], 1, constants.ORIGINAL_FILES_MESSAGE)
-    query_manager.add_query(["config"], 1, constants.CONFIG_FILE_MESSAGE)
-    query_manager.add_query(["level", "levels", "experience", "xp"], 1, constants.LEVELS_FILE_MESSAGE)
-    query_manager.add_query(["scoreboard"], 1, constants.SCOREBOARD_FILE_MESSAGE)
-    query_manager.add_query(["sign"], 1, constants.SIGN_FILE_MESSAGE)
-    query_manager.add_query(["streak", "killstreak"], 1, constants.KILLSTREAKS_FILE_MESSAGE)
-    query_manager.add_query(["menu"], 1, constants.MENU_FILE_MESSAGE)
-    query_manager.add_query(["region", "pvp"], 2, constants.PVP_NOT_PERMITTED_MESSAGE)
-    query_manager.add_query(["spectator", "stuck"], 1, constants.FANCY_DEATH_MESSAGE)
-    query_manager.add_query(["lose", "losing", "items", "inventory"], 2, constants.INVENTORY_MESSAGE)
-    query_manager.add_query(["leave", "return", "clock", "hub"], 1, constants.LEAVE_ITEM_MESSAGE)
-    query_manager.add_query(["placeholder", "placeholders", "papi", "placeholderapi"], 1, constants.PLACEHOLDERS_MESSAGE)
-    query_manager.add_query(["1v1"], 1, constants.ONEVONE_MESSAGE)
-    query_manager.add_query(["unlock", "unlocks"], 1, constants.UNLOCK_KIT_MESSAGE)
-    query_manager.add_query(["not", "showing"], 2, constants.SCOREBOARD_NOT_WORKING_MESSAGE)
-    query_manager.add_query(["reset", "resetting", "file", "replace"], 1, constants.FILES_RESETTING_MESSAGE)
-
+    ##################################
+    #   Question / query handling    #
+    ##################################
+    query_manager.add_query(["download", "Simon", "source"], 2, constants.SIMON_SOURCE_CODE)
     print("Finished loading and logged in as {0.user}".format(client))
 
 
@@ -54,32 +39,46 @@ async def on_message(message):
     if author == client.user:  # if message is from bot, ignore it
         return
 
-    if len(message.attachments) > 0:  # only allow attachments from https://paste.helpch.at
+    ####################################
+    #   Text attachment requirement    #
+    ####################################
+    if len(message.attachments) > 0:
         attachment_url = message.attachments[0].url
         if attachment_url.endswith(".txt") or attachment_url.endswith(".log") or attachment_url.endswith(".yml"):
             message: discord.Message
-            await message.delete()
-            await message.channel.send(constants.ONLY_HELPCHAT_ATTACHMENTS.format(author.mention))
+            await message.delete()  # delete attachment that was posted
+            await message.channel.send(constants.ONLY_PASTEBIN_ATTACHMENTS.format(author.mention))
             return
 
     best_response = query_manager.get_best_response(content)
 
-    if best_response is not None:
+    if best_response is not None:  # if an appropriate response was found
         channel = message.channel
-        if isinstance(channel, discord.TextChannel):
-            # only send messages in the #kitpvp and test channel
-            if channel.name != "kitpvp" and channel.name != "test-bot-commands":
+        if isinstance(channel, discord.TextChannel):  # checking if text channel
+            ####################################
+            # Active only in specific channels #
+            ####################################
+            if channel.name not in participating_channels:
                 return
-        await message.channel.send(best_response)  # TODO: try to use quoting system if possible
+        await message.channel.send(best_response)
     else:  # couldn't find a good response to give
+        ####################################
+        #  Send automated responses in DM  #
+        ####################################
         if isinstance(message.channel, discord.DMChannel):  # checking if in a DM
             await message.channel.send(constants.UNSURE_MESSAGE)
 
 
 @client.event
 async def on_member_join(member):
+    ####################################
+    #        DM welcome message        #
+    ####################################
     await member.send(constants.DM_WELCOME_MESSAGE)
 
 
+# keep_alive.py and the below lines are only necessary if using free Discord bot hosting (see guide below):
+# https://medium.com/geekculture/how-to-make-your-own-discord-bot-9505173a4f6a
+# otherwise, these lines and keep_alive.py can safely be deleted
 keep_alive()
 client.run(os.getenv("TOKEN"))

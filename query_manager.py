@@ -1,6 +1,7 @@
 from typing import Optional, List
 
-def split_to_only_words_and_numbers(query: str) -> List:
+
+def split_to_only_words_and_numbers(query: str) -> List:  # removes special characters, only leaves words and numbers
     filtered_words: List = []
     word: str
     for word in query.split(" "):
@@ -21,13 +22,11 @@ class QueryManager:
         self.queries.append(QueryResponse(hot_words, minimum_number_of_hits, response))
 
     def get_best_response(self, query: str) -> Optional[str]:
-        print("\n\n\n")
         query_words: List = split_to_only_words_and_numbers(query)
         best_response_index: int = 0
         best_response_hits = 0
         for index, query_response in enumerate(self.queries):
             current_query_hits = query_response.calculate_total_hits(query_words)
-            # print("Hits for [%s]: %d", query_response.hot_words, current_query_hits)
             if current_query_hits > best_response_hits:
                 best_response_index = index
                 best_response_hits = current_query_hits
